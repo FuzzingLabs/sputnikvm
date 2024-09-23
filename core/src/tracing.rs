@@ -13,7 +13,7 @@ pub trait EventListener {
 pub enum Event<'a> {
 	DebuggingWithOperand {
         opcode: Opcode,
-        operands: Vec<H256>,
+        operands: &'a Vec<H256>,
         position: &'a Result<usize, ExitReason>,
         stack: &'a Stack,
 		memory: &'a Memory,
