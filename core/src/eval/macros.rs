@@ -66,9 +66,9 @@ macro_rules! push_u256 {
 }
 
 macro_rules! op1_u256_fn {
-	( $machine:expr, $op:path ) => {{
+	( $machine:expr, $op:path, $position:expr ) => {{
 		pop_u256!($machine, op1);
-		let ret = $op(op1);
+		let ret = $op(op1, $position);
 		push_u256!($machine, ret);
 		trace_op!("{} {}: {}", stringify!($op), op1, ret);
 
@@ -110,9 +110,9 @@ macro_rules! op2_u256_tuple {
 }
 
 macro_rules! op2_u256_fn {
-	( $machine:expr, $op:path ) => {{
+	( $machine:expr, $op:path, $position:expr ) => {{
 		pop_u256!($machine, op1, op2);
-		let ret = $op(op1, op2);
+		let ret = $op(op1, op2, $position);
 		push_u256!($machine, ret);
 		trace_op!("{} {}, {}: {}", stringify!($op), op1, op2, ret);
 
@@ -121,9 +121,9 @@ macro_rules! op2_u256_fn {
 }
 
 macro_rules! op3_u256_fn {
-	( $machine:expr, $op:path ) => {{
+	( $machine:expr, $op:path, $position:expr ) => {{
 		pop_u256!($machine, op1, op2, op3);
-		let ret = $op(op1, op2, op3);
+		let ret = $op(op1, op2, op3, $position);
 		push_u256!($machine, ret);
 		trace_op!("{} {}, {}, {}: {}", stringify!($op), op1, op2, op3, ret);
 

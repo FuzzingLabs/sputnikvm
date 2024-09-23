@@ -1,10 +1,20 @@
 use crate::utils::I256;
-use core::convert::TryInto;
+use core::{convert::TryInto, usize};
 use core::ops::Rem;
 use primitive_types::{U256, U512};
 
 #[inline]
-pub fn div(op1: U256, op2: U256) -> U256 {
+pub fn div(op1: U256, op2: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	if op2 == U256::zero() {
 		U256::zero()
 	} else {
@@ -13,15 +23,35 @@ pub fn div(op1: U256, op2: U256) -> U256 {
 }
 
 #[inline]
-pub fn sdiv(op1: U256, op2: U256) -> U256 {
+pub fn sdiv(op1: U256, op2: U256, _position: usize) -> U256 {
 	let op1: I256 = op1.into();
 	let op2: I256 = op2.into();
 	let ret = op1 / op2;
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	ret.into()
 }
 
 #[inline]
-pub fn rem(op1: U256, op2: U256) -> U256 {
+pub fn rem(op1: U256, op2: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	if op2 == U256::zero() {
 		U256::zero()
 	} else {
@@ -30,7 +60,17 @@ pub fn rem(op1: U256, op2: U256) -> U256 {
 }
 
 #[inline]
-pub fn srem(op1: U256, op2: U256) -> U256 {
+pub fn srem(op1: U256, op2: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	if op2 == U256::zero() {
 		U256::zero()
 	} else {
@@ -42,7 +82,17 @@ pub fn srem(op1: U256, op2: U256) -> U256 {
 }
 
 #[inline]
-pub fn addmod(op1: U256, op2: U256, op3: U256) -> U256 {
+pub fn addmod(op1: U256, op2: U256, op3: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	let op1: U512 = op1.into();
 	let op2: U512 = op2.into();
 	let op3: U512 = op3.into();
@@ -57,7 +107,17 @@ pub fn addmod(op1: U256, op2: U256, op3: U256) -> U256 {
 }
 
 #[inline]
-pub fn mulmod(op1: U256, op2: U256, op3: U256) -> U256 {
+pub fn mulmod(op1: U256, op2: U256, op3: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	let op1: U512 = op1.into();
 	let op2: U512 = op2.into();
 	let op3: U512 = op3.into();
@@ -72,7 +132,17 @@ pub fn mulmod(op1: U256, op2: U256, op3: U256) -> U256 {
 }
 
 #[inline]
-pub fn exp(op1: U256, op2: U256) -> U256 {
+pub fn exp(op1: U256, op2: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	let mut op1 = op1;
 	let mut op2 = op2;
 	let mut r: U256 = 1.into();
@@ -104,7 +174,17 @@ pub fn exp(op1: U256, op2: U256) -> U256 {
 /// `b == 0` then the yellow paper says the output should start with all zeros, then end with
 /// bits from `b`; this is equal to `y & mask` where `&` is bitwise `AND`.
 #[inline]
-pub fn signextend(op1: U256, op2: U256) -> U256 {
+pub fn signextend(op1: U256, op2: U256, _position: usize) -> U256 {
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	if op1 < U256::from(32) {
 		// `low_u32` works since op1 < 32
 		#[allow(clippy::as_conversions)]
@@ -151,7 +231,7 @@ mod tests {
 
 	fn compare_old_signextend(x: U256, y: U256) {
 		let old = old_signextend(x, y);
-		let new = signextend(x, y);
+		let new = signextend(x, y, 0);
 
 		assert_eq!(old, new);
 	}

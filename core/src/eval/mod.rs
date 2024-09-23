@@ -60,28 +60,29 @@ fn eval_table<H: InterpreterHandler>(
 		table_elem!(ADD, state, op2_u256_tuple!(state, overflowing_add));
 		table_elem!(MUL, state, op2_u256_tuple!(state, overflowing_mul));
 		table_elem!(SUB, state, op2_u256_tuple!(state, overflowing_sub));
-		table_elem!(DIV, state, op2_u256_fn!(state, self::arithmetic::div));
-		table_elem!(SDIV, state, op2_u256_fn!(state, self::arithmetic::sdiv));
-		table_elem!(EXP, state, op2_u256_fn!(state, self::arithmetic::exp));
+		table_elem!(DIV, state, position,  op2_u256_fn!(state, self::arithmetic::div, position));
+		table_elem!(SDIV, state, position, op2_u256_fn!(state, self::arithmetic::sdiv, position));
+		table_elem!(EXP, state, position, op2_u256_fn!(state, self::arithmetic::exp, position));
 		table_elem!(
 			SIGNEXTEND,
 			state,
-			op2_u256_fn!(state, self::arithmetic::signextend)
+			position,
+			op2_u256_fn!(state, self::arithmetic::signextend, position)
 		);
 		table_elem!(LT, state, op2_u256_bool_ref!(state, lt));
 		table_elem!(GT, state, op2_u256_bool_ref!(state, gt));
-		table_elem!(SLT, state, op2_u256_fn!(state, self::bitwise::slt));
-		table_elem!(SGT, state, op2_u256_fn!(state, self::bitwise::sgt));
+		table_elem!(SLT, state, position, op2_u256_fn!(state, self::bitwise::slt, position));
+		table_elem!(SGT, state, position, op2_u256_fn!(state, self::bitwise::sgt, position));
 		table_elem!(EQ, state, op2_u256_bool_ref!(state, eq));
-		table_elem!(ISZERO, state, op1_u256_fn!(state, self::bitwise::iszero));
+		table_elem!(ISZERO, state, position, op1_u256_fn!(state, self::bitwise::iszero, position));
 		table_elem!(AND, state, op2_u256!(state, bitand));
 		table_elem!(OR, state, op2_u256!(state, bitor));
 		table_elem!(XOR, state, op2_u256!(state, bitxor));
-		table_elem!(NOT, state, op1_u256_fn!(state, self::bitwise::not));
-		table_elem!(BYTE, state, op2_u256_fn!(state, self::bitwise::byte));
-		table_elem!(SHL, state, op2_u256_fn!(state, self::bitwise::shl));
-		table_elem!(SHR, state, op2_u256_fn!(state, self::bitwise::shr));
-		table_elem!(SAR, state, op2_u256_fn!(state, self::bitwise::sar));
+		table_elem!(NOT, state, position, op1_u256_fn!(state, self::bitwise::not, position));
+		table_elem!(BYTE, state, position, op2_u256_fn!(state, self::bitwise::byte, position));
+		table_elem!(SHL, state, position,op2_u256_fn!(state, self::bitwise::shl, position));
+		table_elem!(SHR, state, position, op2_u256_fn!(state, self::bitwise::shr, position));
+		table_elem!(SAR, state, position, op2_u256_fn!(state, self::bitwise::sar, position));
 		table_elem!(POP, state, position, self::misc::pop(state, position));
 		table_elem!(PC, state, position, self::misc::pc(state, position));
 		table_elem!(MSIZE, state, position, self::misc::msize(state, position));
@@ -233,13 +234,13 @@ fn eval_table<H: InterpreterHandler>(
 			position,
 			self::misc::push(state, 32, position)
 		);
-		table_elem!(MOD, state, op2_u256_fn!(state, self::arithmetic::rem));
-		table_elem!(SMOD, state, op2_u256_fn!(state, self::arithmetic::srem));
+		table_elem!(MOD, state, position, op2_u256_fn!(state, self::arithmetic::rem, position));
+		table_elem!(SMOD, state, position, op2_u256_fn!(state, self::arithmetic::srem, position));
 		table_elem!(CODESIZE, state, position, self::misc::codesize(state, position));
 		table_elem!(CALLDATALOAD, state, position, self::misc::calldataload(state, position));
 		table_elem!(CALLDATASIZE, state, position, self::misc::calldatasize(state, position));
-		table_elem!(ADDMOD, state, op3_u256_fn!(state, self::arithmetic::addmod));
-		table_elem!(MULMOD, state, op3_u256_fn!(state, self::arithmetic::mulmod));
+		table_elem!(ADDMOD, state, position, op3_u256_fn!(state, self::arithmetic::addmod, position));
+		table_elem!(MULMOD, state, position, op3_u256_fn!(state, self::arithmetic::mulmod, position));
 		table_elem!(MLOAD, state, position, self::misc::mload(state, position));
 		table_elem!(MSTORE, state, position, self::misc::mstore(state, position));
 		table_elem!(MSTORE8, state, position,self::misc::mstore8(state, position));
