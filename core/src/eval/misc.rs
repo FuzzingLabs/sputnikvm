@@ -181,7 +181,6 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 		event!(DebuggingWithOperand{
 			opcode: Opcode(state.code[position]),
 			operands: &slice.to_vec(),
-			n: n,
 			position: &Ok(position),
 			stack: state.stack(),
 			memory: state.memory(),
@@ -204,6 +203,19 @@ pub fn push1(state: &mut Machine, position: usize) -> Control {
 	let val = U256::from(b0);
 
 	push_u256!(state, val);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		let x = u8::from(*state.code.get(position + 1).unwrap_or(&0));
+		let slice = vec![x];
+		event!(DebuggingWithOperand{
+			opcode: Opcode(state.code[position]),
+			operands: &slice,
+			position: &Ok(position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(2)
 }
 
@@ -214,6 +226,17 @@ pub fn push2(state: &mut Machine, position: usize) -> Control {
 	let val = U256::from((b0 << 8) | b1);
 
 	push_u256!(state, val);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithOperand{
+			opcode: Opcode(state.code[position]),
+			operands: &slice.to_vec(),
+			position: &Ok(position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(3)
 }
 
