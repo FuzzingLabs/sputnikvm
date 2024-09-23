@@ -35,7 +35,7 @@ fn eval_table<H: InterpreterHandler>(
 	handler: &mut H,
 	address: &H160,
 ) -> Control {
-	static TABLE: [fn(state: &mut Machine, opcode: Opcode, position: usize) -> Control; 256] = {
+	let table: [fn(state: &mut Machine, opcode: Opcode, position: usize) -> Control; 256] = {
 		fn eval_external(state: &mut Machine, opcode: Opcode, position: usize) -> Control {
 			state.position = Ok(position + 1);
 			Control::Trap(opcode)
@@ -302,7 +302,7 @@ fn eval_table<H: InterpreterHandler>(
 				return Control::Exit(ExitReason::Error(e));
 			}
 		};
-		let control = TABLE[op.as_usize()](state, op, pc);
+		let control = table[op.as_usize()](state, op, pc);
 
 		#[cfg(feature = "tracing")]
 		{

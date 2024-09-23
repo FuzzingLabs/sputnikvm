@@ -453,7 +453,7 @@ fn count_access_list(access_list: &[(H160, Vec<H256>)]) -> (usize, usize) {
 #[inline]
 #[must_use]
 pub fn static_opcode_cost(opcode: Opcode) -> Option<u32> {
-	static TABLE: [Option<u32>; 256] = {
+	let table: [Option<u32>; 256] = {
 		let mut table = [None; 256];
 
 		table[Opcode::STOP.as_usize()] = Some(consts::G_ZERO);
@@ -571,7 +571,7 @@ pub fn static_opcode_cost(opcode: Opcode) -> Option<u32> {
 		table
 	};
 
-	TABLE[opcode.as_usize()]
+	table[opcode.as_usize()]
 }
 
 /// Calculate the opcode cost.
