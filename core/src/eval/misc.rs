@@ -3,19 +3,20 @@ use super::Control;
 use crate::utils::USIZE_MAX;
 use crate::{ExitError, ExitRevert, ExitSucceed, Machine};
 use core::cmp::min;
+use core::usize;
 use primitive_types::{H256, U256};
 
 
 #[inline]
-pub fn codesize(state: &mut Machine) -> Control {
+pub fn codesize(state: &mut Machine, _position: usize) -> Control {
 	let size = U256::from(state.code.len());
 	push_u256!(state, size);
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -24,7 +25,7 @@ pub fn codesize(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn codecopy(state: &mut Machine) -> Control {
+pub fn codecopy(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, memory_offset, code_offset, len);
 
 	// If `len` is zero then nothing happens, regardless of the
@@ -41,8 +42,8 @@ pub fn codecopy(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -57,7 +58,7 @@ pub fn codecopy(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn calldataload(state: &mut Machine) -> Control {
+pub fn calldataload(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, index);
 
 	let mut load = [0u8; 32];
@@ -88,15 +89,15 @@ pub fn calldataload(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn calldatasize(state: &mut Machine) -> Control {
+pub fn calldatasize(state: &mut Machine, _position: usize) -> Control {
 	let len = U256::from(state.data.len());
 	push_u256!(state, len);
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -105,7 +106,7 @@ pub fn calldatasize(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn calldatacopy(state: &mut Machine) -> Control {
+pub fn calldatacopy(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, memory_offset, data_offset, len);
 
 	// See comment on `codecopy` about the `len == 0` case.
@@ -120,8 +121,8 @@ pub fn calldatacopy(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -136,43 +137,8 @@ pub fn calldatacopy(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn pop(state: &mut Machine) -> Control {
+pub fn pop(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, _val);
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
-	Control::Continue(1)
-}
-
-#[inline]
-pub fn mload(state: &mut Machine) -> Control {
-	pop_u256!(state, index);
-	let index = as_usize_or_fail!(index);
-	try_or_fail!(state.memory.resize_offset(index, 32));
-	let value = state.memory.get_h256(index);
-	push_h256!(state, value);
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
-	Control::Continue(1)
-}
-
-#[inline]
-pub fn mstore(state: &mut Machine, _position: usize) -> Control {
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
@@ -183,10 +149,47 @@ pub fn mstore(state: &mut Machine, _position: usize) -> Control {
 			memory: state.memory(),
 		});
 	}
+	Control::Continue(1)
+}
+
+#[inline]
+pub fn mload(state: &mut Machine, _position: usize) -> Control {
+	pop_u256!(state, index);
+	let index = as_usize_or_fail!(index);
+	try_or_fail!(state.memory.resize_offset(index, 32));
+	let value = state.memory.get_h256(index);
+	push_h256!(state, value);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
+	Control::Continue(1)
+}
+
+#[inline]
+pub fn mstore(state: &mut Machine, _position: usize) -> Control {
+	
 	pop_u256!(state, index);
 	let index = as_usize_or_fail!(index);
 	pop_h256!(state, value);
 	try_or_fail!(state.memory.resize_offset(index, 32));
+
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	match state.memory.set(index, &value[..], Some(32)) {
 		Ok(()) => Control::Continue(1),
 		Err(e) => Control::Exit(e.into()),
@@ -194,7 +197,7 @@ pub fn mstore(state: &mut Machine, _position: usize) -> Control {
 }
 
 #[inline]
-pub fn mstore8(state: &mut Machine) -> Control {
+pub fn mstore8(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, index, value);
 	let index = as_usize_or_fail!(index);
 	try_or_fail!(state.memory.resize_offset(index, 1));
@@ -203,8 +206,8 @@ pub fn mstore8(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -216,15 +219,15 @@ pub fn mstore8(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn jump(state: &mut Machine) -> Control {
+pub fn jump(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, dest);
 	let dest = as_usize_or_fail!(dest, ExitError::InvalidJump);
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -238,14 +241,14 @@ pub fn jump(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn jumpi(state: &mut Machine) -> Control {
+pub fn jumpi(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, dest, value);
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -270,8 +273,8 @@ pub fn pc(state: &mut Machine, position: usize) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[position]),
+			position: &Ok(position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -280,14 +283,14 @@ pub fn pc(state: &mut Machine, position: usize) -> Control {
 }
 
 #[inline]
-pub fn msize(state: &mut Machine) -> Control {
+pub fn msize(state: &mut Machine, _position: usize) -> Control {
 	push_u256!(state, state.memory.effective_len().into());
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -319,10 +322,20 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 }
 
 #[inline]
-pub fn push0(state: &mut Machine) -> Control {
+pub fn push0(state: &mut Machine, _position: usize) -> Control {
 	let val = U256::zero();
 
 	push_u256!(state, val);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -373,7 +386,7 @@ pub fn push2(state: &mut Machine, position: usize) -> Control {
 }
 
 #[inline]
-pub fn dup(state: &mut Machine, n: usize) -> Control {
+pub fn dup(state: &mut Machine, n: usize, _position: usize) -> Control {
 	let value = match state.stack.peek(n - 1) {
 		Ok(value) => value,
 		Err(e) => return Control::Exit(e.into()),
@@ -383,8 +396,8 @@ pub fn dup(state: &mut Machine, n: usize) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -393,7 +406,7 @@ pub fn dup(state: &mut Machine, n: usize) -> Control {
 }
 
 #[inline]
-pub fn swap(state: &mut Machine, n: usize) -> Control {
+pub fn swap(state: &mut Machine, n: usize, _position: usize) -> Control {
 	let val1 = match state.stack.peek(0) {
 		Ok(value) => value,
 		Err(e) => return Control::Exit(e.into()),
@@ -414,8 +427,8 @@ pub fn swap(state: &mut Machine, n: usize) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -424,7 +437,7 @@ pub fn swap(state: &mut Machine, n: usize) -> Control {
 }
 
 #[inline]
-pub fn ret(state: &mut Machine) -> Control {
+pub fn ret(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, start, len);
 	if len > U256::zero() {
 		let start = as_usize_or_fail!(start);
@@ -436,8 +449,8 @@ pub fn ret(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -446,7 +459,7 @@ pub fn ret(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn revert(state: &mut Machine) -> Control {
+pub fn revert(state: &mut Machine, _position: usize) -> Control {
 	pop_u256!(state, start, len);
 	if len > U256::zero() {
 		let start = as_usize_or_fail!(start);
@@ -458,8 +471,8 @@ pub fn revert(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
