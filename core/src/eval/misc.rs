@@ -177,8 +177,8 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 	push_u256!(state, val);
 	#[cfg(feature = "tracing")]
 	event!(DebuggingWithOperand{
-		opcode: Opcode(state.code[position])
-		operands: val
+		opcode: Opcode(state.code[position]),
+		operands: val,
 		position: &Ok(position),
 		stack: state.stack(),
 		memory: state.memory(),
