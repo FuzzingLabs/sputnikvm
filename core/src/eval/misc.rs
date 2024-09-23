@@ -10,6 +10,16 @@ use primitive_types::{H256, U256};
 pub fn codesize(state: &mut Machine) -> Control {
 	let size = U256::from(state.code.len());
 	push_u256!(state, size);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -27,6 +37,16 @@ pub fn codecopy(state: &mut Machine) -> Control {
 	let memory_offset = as_usize_or_fail!(memory_offset);
 
 	try_or_fail!(state.memory.resize_offset(memory_offset, len));
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	match state
 		.memory
 		.copy_large(memory_offset, code_offset, len, &state.code)
@@ -54,6 +74,16 @@ pub fn calldataload(state: &mut Machine) -> Control {
 	}
 
 	push_h256!(state, H256::from(load));
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -61,6 +91,16 @@ pub fn calldataload(state: &mut Machine) -> Control {
 pub fn calldatasize(state: &mut Machine) -> Control {
 	let len = U256::from(state.data.len());
 	push_u256!(state, len);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -76,7 +116,16 @@ pub fn calldatacopy(state: &mut Machine) -> Control {
 	let memory_offset = as_usize_or_fail!(memory_offset);
 
 	try_or_fail!(state.memory.resize_offset(memory_offset, len));
-
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	match state
 		.memory
 		.copy_large(memory_offset, data_offset, len, &state.data)
@@ -89,6 +138,16 @@ pub fn calldatacopy(state: &mut Machine) -> Control {
 #[inline]
 pub fn pop(state: &mut Machine) -> Control {
 	pop_u256!(state, _val);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -99,6 +158,16 @@ pub fn mload(state: &mut Machine) -> Control {
 	try_or_fail!(state.memory.resize_offset(index, 32));
 	let value = state.memory.get_h256(index);
 	push_h256!(state, value);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position]),
+			position: &Ok(state.position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
