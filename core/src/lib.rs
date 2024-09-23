@@ -68,6 +68,8 @@ pub struct Machine {
 	memory: Memory,
 	/// Stack.
 	stack: Stack,
+	// updated pc
+	pc: usize
 }
 
 /// EVM interpreter handler.
@@ -114,6 +116,14 @@ impl Machine {
 		&self.position
 	}
 
+	pub fn pc(&self) -> usize {
+		self.pc
+	}
+
+	pub fn set_pc(&mut self, new_pc: usize) {
+		self.pc = new_pc;
+	}
+
 	/// Create a new machine with given code and data.
 	#[must_use]
 	pub fn new(
@@ -132,6 +142,7 @@ impl Machine {
 			valids,
 			memory: Memory::new(memory_limit),
 			stack: Stack::new(stack_limit),
+			pc: 0
 		}
 	}
 
