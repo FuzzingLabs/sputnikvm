@@ -307,6 +307,9 @@ pub fn msize(state: &mut Machine) -> Control {
 
 #[inline]
 pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
+	
+	let end = min(position + 1 + n, state.code.len());
+	let slice = &state.code[(position + 1)..end];
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
@@ -318,8 +321,6 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 			memory: state.memory(),
 		});
 	}
-	let end = min(position + 1 + n, state.code.len());
-	let slice = &state.code[(position + 1)..end];
 	let mut val = [0u8; 32];
 	val[(32 - n)..(32 - n + slice.len())].copy_from_slice(slice);
 	let val = U256::from_big_endian(&val);
