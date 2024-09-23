@@ -172,14 +172,13 @@ pub fn mload(state: &mut Machine) -> Control {
 }
 
 #[inline]
-pub fn mstore(state: &mut Machine) -> Control {
-	println!("mstore");
+pub fn mstore(state: &mut Machine, _position: usize) -> Control {
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[_position]),
+			position: &Ok(_position),
 			stack: state.stack(),
 			memory: state.memory(),
 		});

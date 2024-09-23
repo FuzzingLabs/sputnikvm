@@ -241,7 +241,7 @@ fn eval_table<H: InterpreterHandler>(
 		table_elem!(ADDMOD, state, op3_u256_fn!(state, self::arithmetic::addmod));
 		table_elem!(MULMOD, state, op3_u256_fn!(state, self::arithmetic::mulmod));
 		table_elem!(MLOAD, state, self::misc::mload(state));
-		table_elem!(MSTORE, state, self::misc::mstore(state));
+		table_elem!(MSTORE, state, position, self::misc::mstore(state, position));
 		table_elem!(MSTORE8, state, self::misc::mstore8(state));
 		table_elem!(CODECOPY, state, self::misc::codecopy(state));
 		table_elem!(CALLDATACOPY, state, self::misc::calldatacopy(state));
