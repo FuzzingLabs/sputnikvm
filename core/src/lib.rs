@@ -22,6 +22,14 @@ pub mod prelude {
 #[cfg(feature = "tracing")]
 pub mod tracing;
 
+#[cfg(feature = "tracing")]
+macro_rules! event {
+	($x:expr) => {
+		use crate::tracing::Event::*;
+		crate::tracing::with(|listener| listener.event($x));
+	};
+}
+
 mod error;
 mod eval;
 mod external;
