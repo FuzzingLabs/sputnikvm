@@ -334,13 +334,9 @@ pub fn push0(state: &mut Machine) -> Control {
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
-		let x = u8::from(*state.code.get(position + 1).unwrap_or(&0));
-		let x2 = u8::from(*state.code.get(position + 2).unwrap_or(&0));
-		let slice = vec![x, x2];
-		event!(DebuggingWithOperand{
-			opcode: Opcode(state.code[position]),
-			operands: &slice,
-			position: &Ok(position),
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
