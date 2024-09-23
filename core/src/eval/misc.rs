@@ -226,17 +226,7 @@ pub fn push2(state: &mut Machine, position: usize) -> Control {
 	let val = U256::from((b0 << 8) | b1);
 
 	push_u256!(state, val);
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithOperand{
-			opcode: Opcode(state.code[position]),
-			operands: &slice.to_vec(),
-			position: &Ok(position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+
 	Control::Continue(3)
 }
 
