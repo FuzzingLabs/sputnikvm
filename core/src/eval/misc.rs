@@ -14,8 +14,8 @@ pub fn codesize(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -41,8 +41,8 @@ pub fn codecopy(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -78,8 +78,8 @@ pub fn calldataload(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -95,8 +95,8 @@ pub fn calldatasize(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -120,8 +120,8 @@ pub fn calldatacopy(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -142,8 +142,8 @@ pub fn pop(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -162,8 +162,8 @@ pub fn mload(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -173,13 +173,12 @@ pub fn mload(state: &mut Machine) -> Control {
 
 #[inline]
 pub fn mstore(state: &mut Machine) -> Control {
-	println!("mstore");
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -204,8 +203,8 @@ pub fn mstore8(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -224,8 +223,8 @@ pub fn jump(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -245,8 +244,8 @@ pub fn jumpi(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -271,8 +270,8 @@ pub fn pc(state: &mut Machine, position: usize) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -287,8 +286,8 @@ pub fn msize(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -384,8 +383,8 @@ pub fn dup(state: &mut Machine, n: usize) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -415,8 +414,8 @@ pub fn swap(state: &mut Machine, n: usize) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -437,8 +436,8 @@ pub fn ret(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
@@ -459,8 +458,8 @@ pub fn revert(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.clone().unwrap()]),
-			position: &state.position,
+			opcode: Opcode(state.code[state.pc]),
+			position: &Ok(state.pc),
 			stack: state.stack(),
 			memory: state.memory(),
 		});
