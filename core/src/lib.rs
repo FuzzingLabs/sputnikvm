@@ -19,6 +19,9 @@ pub mod prelude {
 	pub use std::{borrow::Cow, rc::Rc, vec::Vec};
 }
 
+#[cfg(feature = "tracing")]
+pub mod tracing;
+
 mod error;
 mod eval;
 mod external;

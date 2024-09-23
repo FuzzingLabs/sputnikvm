@@ -5,6 +5,7 @@ use crate::{ExitError, ExitRevert, ExitSucceed, Machine};
 use core::cmp::min;
 use primitive_types::{H256, U256};
 
+
 #[inline]
 pub fn codesize(state: &mut Machine) -> Control {
 	let size = U256::from(state.code.len());

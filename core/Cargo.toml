@@ -11,18 +11,22 @@ repository.workspace = true
 [dependencies]
 primitive-types.workspace = true
 
+
 # Optional
 log = { version = "0.4", optional = true }
 scale-codec = { package = "parity-scale-codec", version = "3.2", default-features = false, features = ["derive", "full"], optional = true }
 scale-info = { version = "2.3", default-features = false, features = ["derive"], optional = true }
 serde = { version = "1.0", default-features = false, features = ["derive"], optional = true }
+environmental = { version = "1.1", default-features = false, optional = true }
 
 [dev-dependencies]
 hex = "0.4"
 
+
 [features]
 default = ["std"]
 std = [
+    "environmental/std",
     "primitive-types/std",
     "serde/std",
     "scale-codec/std",
@@ -40,4 +44,8 @@ with-serde = [
 force-debug = [
     "log",
 ]
-tracing = []
+tracing = [
+    "environmental",
+]
+
+
