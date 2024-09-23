@@ -1,7 +1,7 @@
 use super::Control;
 
 use crate::utils::USIZE_MAX;
-use crate::{ExitError, ExitRevert, ExitSucceed, Machine, Opcode};
+use crate::{ExitError, ExitRevert, ExitSucceed, Machine};
 use core::cmp::min;
 use primitive_types::{H256, U256};
 
@@ -176,13 +176,16 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 
 	push_u256!(state, val);
 	#[cfg(feature = "tracing")]
-	event!(DebuggingWithOperand{
-		opcode: Opcode(state.code[position]),
-		operands: val,
-		position: &Ok(position),
-		stack: state.stack(),
-		memory: state.memory(),
-	});
+	{
+		use crate::Opcode;
+		event!(DebuggingWithOperand{
+			opcode: Opcode(state.code[position]),
+			operands: val,
+			position: &Ok(position),
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1 + n)
 }
 
