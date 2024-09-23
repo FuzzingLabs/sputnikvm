@@ -71,7 +71,7 @@ macro_rules! op1_u256_fn {
 		{
 			use crate::Opcode;
 			event!(DebuggingWithoutOperand{
-				opcode: Opcode($machine.code[$machine.pc.clone().unwrap()]),
+				opcode: Opcode($machine.code[$machine.pc]),
 				position: &Ok($machine.pc),
 				stack: $machine.stack(),
 				memory: $machine.memory(),
@@ -88,6 +88,16 @@ macro_rules! op1_u256_fn {
 
 macro_rules! op2_u256_bool_ref {
 	( $machine:expr, $op:ident ) => {{
+		#[cfg(feature = "tracing")]
+		{
+			use crate::Opcode;
+			event!(DebuggingWithoutOperand{
+				opcode: Opcode($machine.code[$machine.pc]),
+				position: &Ok($machine.pc),
+				stack: $machine.stack(),
+				memory: $machine.memory(),
+			});
+		}
 		pop_u256!($machine, op1, op2);
 		let ret = op1.$op(&op2);
 		push_u256!($machine, if ret { U256::one() } else { U256::zero() });
@@ -103,7 +113,7 @@ macro_rules! op2_u256 {
 		{
 			use crate::Opcode;
 			event!(DebuggingWithoutOperand{
-				opcode: Opcode($machine.code[$machine.pc.clone().unwrap()]),
+				opcode: Opcode($machine.code[$machine.pc]),
 				position: &Ok($machine.pc),
 				stack: $machine.stack(),
 				memory: $machine.memory(),
@@ -124,7 +134,7 @@ macro_rules! op2_u256_tuple {
 		{
 			use crate::Opcode;
 			event!(DebuggingWithoutOperand{
-				opcode: Opcode($machine.code[$machine.pc.clone().unwrap()]),
+				opcode: Opcode($machine.code[$machine.pc]),
 				position: &Ok($machine.pc),
 				stack: $machine.stack(),
 				memory: $machine.memory(),
@@ -145,7 +155,7 @@ macro_rules! op2_u256_fn {
 		{
 			use crate::Opcode;
 			event!(DebuggingWithoutOperand{
-				opcode: Opcode($machine.code[$machine.pc.clone().unwrap()]),
+				opcode: Opcode($machine.code[$machine.pc]),
 				position: &Ok($machine.pc),
 				stack: $machine.stack(),
 				memory: $machine.memory(),
@@ -166,7 +176,7 @@ macro_rules! op3_u256_fn {
 		{
 			use crate::Opcode;
 			event!(DebuggingWithoutOperand{
-				opcode: Opcode($machine.code[$machine.pc.clone().unwrap()]),
+				opcode: Opcode($machine.code[$machine.pc]),
 				position: &Ok($machine.pc),
 				stack: $machine.stack(),
 				memory: $machine.memory(),
