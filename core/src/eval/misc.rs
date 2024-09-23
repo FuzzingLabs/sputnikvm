@@ -173,6 +173,7 @@ pub fn mload(state: &mut Machine) -> Control {
 
 #[inline]
 pub fn mstore(state: &mut Machine) -> Control {
+	println!("mstore");
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
