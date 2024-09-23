@@ -2,17 +2,7 @@ use crate::utils::{Sign, I256};
 use primitive_types::U256;
 
 #[inline]
-pub fn slt(op1: U256, op2: U256, _position: usize) -> U256 {
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn slt(op1: U256, op2: U256) -> U256 {
 	let op1: I256 = op1.into();
 	let op2: I256 = op2.into();
 
@@ -24,17 +14,7 @@ pub fn slt(op1: U256, op2: U256, _position: usize) -> U256 {
 }
 
 #[inline]
-pub fn sgt(op1: U256, op2: U256, _position: usize) -> U256 {
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn sgt(op1: U256, op2: U256) -> U256 {
 	let op1: I256 = op1.into();
 	let op2: I256 = op2.into();
 
@@ -46,17 +26,7 @@ pub fn sgt(op1: U256, op2: U256, _position: usize) -> U256 {
 }
 
 #[inline]
-pub fn iszero(op1: U256, _position: usize) -> U256 {
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn iszero(op1: U256) -> U256 {
 	if op1 == U256::zero() {
 		U256::one()
 	} else {
@@ -65,32 +35,12 @@ pub fn iszero(op1: U256, _position: usize) -> U256 {
 }
 
 #[inline]
-pub fn not(op1: U256, _position: usize) -> U256 {
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn not(op1: U256) -> U256 {
 	!op1
 }
 
 #[inline]
-pub fn byte(op1: U256, op2: U256, _position: usize) -> U256 {
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn byte(op1: U256, op2: U256) -> U256 {
 	let mut ret = U256::zero();
 
 	for i in 0..256 {
@@ -107,18 +57,7 @@ pub fn byte(op1: U256, op2: U256, _position: usize) -> U256 {
 }
 
 #[inline]
-pub fn shl(shift: U256, value: U256, _position: usize) -> U256 {
-
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn shl(shift: U256, value: U256) -> U256 {
 	if value == U256::zero() || shift >= U256::from(256) {
 		U256::zero()
 	} else {
@@ -127,17 +66,7 @@ pub fn shl(shift: U256, value: U256, _position: usize) -> U256 {
 }
 
 #[inline]
-pub fn shr(shift: U256, value: U256, _position: usize) -> U256 {
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn shr(shift: U256, value: U256) -> U256 {
 	if value == U256::zero() || shift >= U256::from(256) {
 		U256::zero()
 	} else {
@@ -146,18 +75,7 @@ pub fn shr(shift: U256, value: U256, _position: usize) -> U256 {
 }
 
 #[inline]
-pub fn sar(shift: U256, value: U256, _position: usize) -> U256 {
-
-	#[cfg(feature = "tracing")]
-	{
-		use crate::Opcode;
-		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[_position]),
-			position: &Ok(_position),
-			stack: state.stack(),
-			memory: state.memory(),
-		});
-	}
+pub fn sar(shift: U256, value: U256) -> U256 {
 	let value = I256::from(value);
 
 	if value == I256::zero() || shift >= U256::from(256) {

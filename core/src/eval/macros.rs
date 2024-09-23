@@ -67,8 +67,18 @@ macro_rules! push_u256 {
 
 macro_rules! op1_u256_fn {
 	( $machine:expr, $op:path, $position:expr ) => {{
+		#[cfg(feature = "tracing")]
+		{
+			use crate::Opcode;
+			event!(DebuggingWithoutOperand{
+				opcode: Opcode($machine.code[$position]),
+				position: &Ok($position),
+				stack: $machine.stack(),
+				memory: $machine.memory(),
+			});
+		}
 		pop_u256!($machine, op1);
-		let ret = $op(op1, $position);
+		let ret = $op(op1);
 		push_u256!($machine, ret);
 		trace_op!("{} {}: {}", stringify!($op), op1, ret);
 
@@ -111,8 +121,18 @@ macro_rules! op2_u256_tuple {
 
 macro_rules! op2_u256_fn {
 	( $machine:expr, $op:path, $position:expr ) => {{
+		#[cfg(feature = "tracing")]
+		{
+			use crate::Opcode;
+			event!(DebuggingWithoutOperand{
+				opcode: Opcode($machine.code[$position]),
+				position: &Ok($position),
+				stack: $machine.stack(),
+				memory: $machine.memory(),
+			});
+		}
 		pop_u256!($machine, op1, op2);
-		let ret = $op(op1, op2, $position);
+		let ret = $op(op1, op2);
 		push_u256!($machine, ret);
 		trace_op!("{} {}, {}: {}", stringify!($op), op1, op2, ret);
 
@@ -122,9 +142,20 @@ macro_rules! op2_u256_fn {
 
 macro_rules! op3_u256_fn {
 	( $machine:expr, $op:path, $position:expr ) => {{
+		#[cfg(feature = "tracing")]
+		{
+			use crate::Opcode;
+			event!(DebuggingWithoutOperand{
+				opcode: Opcode($machine.code[$position]),
+				position: &Ok($position),
+				stack: $machine.stack(),
+				memory: $machine.memory(),
+			});
+		}
 		pop_u256!($machine, op1, op2, op3);
-		let ret = $op(op1, op2, op3, $position);
+		let ret = $op(op1, op2, op3);
 		push_u256!($machine, ret);
+
 		trace_op!("{} {}, {}, {}: {}", stringify!($op), op1, op2, op3, ret);
 
 		Control::Continue(1)
