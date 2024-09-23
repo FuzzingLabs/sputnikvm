@@ -180,7 +180,7 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 		use crate::Opcode;
 		event!(DebuggingWithOperand{
 			opcode: Opcode(state.code[position]),
-			operands: slice.to_vec(),
+			operands: &slice.to_vec(),
 			n: n,
 			position: &Ok(position),
 			stack: state.stack(),
