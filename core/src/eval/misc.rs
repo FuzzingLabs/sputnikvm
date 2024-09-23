@@ -14,7 +14,7 @@ pub fn codesize(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
@@ -41,7 +41,7 @@ pub fn codecopy(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
@@ -78,7 +78,7 @@ pub fn calldataload(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
@@ -95,7 +95,7 @@ pub fn calldatasize(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
@@ -120,7 +120,7 @@ pub fn calldatacopy(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
@@ -142,7 +142,7 @@ pub fn pop(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
@@ -162,7 +162,7 @@ pub fn mload(state: &mut Machine) -> Control {
 	{
 		use crate::Opcode;
 		event!(DebuggingWithoutOperand{
-			opcode: Opcode(state.code[state.position.unwrap()]),
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
 			position: &state.position,
 			stack: state.stack(),
 			memory: state.memory(),
