@@ -177,6 +177,16 @@ pub fn mstore(state: &mut Machine) -> Control {
 	let index = as_usize_or_fail!(index);
 	pop_h256!(state, value);
 	try_or_fail!(state.memory.resize_offset(index, 32));
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	match state.memory.set(index, &value[..], Some(32)) {
 		Ok(()) => Control::Continue(1),
 		Err(e) => Control::Exit(e.into()),
@@ -189,6 +199,16 @@ pub fn mstore8(state: &mut Machine) -> Control {
 	let index = as_usize_or_fail!(index);
 	try_or_fail!(state.memory.resize_offset(index, 1));
 	let value = u8::try_from(value.low_u32() & 0xff).unwrap_or(u8::MAX);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	match state.memory.set(index, &[value], Some(1)) {
 		Ok(()) => Control::Continue(1),
 		Err(e) => Control::Exit(e.into()),
@@ -199,6 +219,16 @@ pub fn mstore8(state: &mut Machine) -> Control {
 pub fn jump(state: &mut Machine) -> Control {
 	pop_u256!(state, dest);
 	let dest = as_usize_or_fail!(dest, ExitError::InvalidJump);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 
 	if state.valids.is_valid(dest) {
 		Control::Jump(dest)
@@ -210,6 +240,16 @@ pub fn jump(state: &mut Machine) -> Control {
 #[inline]
 pub fn jumpi(state: &mut Machine) -> Control {
 	pop_u256!(state, dest, value);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 
 	if value == U256::zero() {
 		Control::Continue(1)
@@ -226,12 +266,32 @@ pub fn jumpi(state: &mut Machine) -> Control {
 #[inline]
 pub fn pc(state: &mut Machine, position: usize) -> Control {
 	push_u256!(state, U256::from(position));
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
 #[inline]
 pub fn msize(state: &mut Machine) -> Control {
 	push_u256!(state, state.memory.effective_len().into());
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -319,6 +379,16 @@ pub fn dup(state: &mut Machine, n: usize) -> Control {
 		Err(e) => return Control::Exit(e.into()),
 	};
 	push_u256!(state, value);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -340,6 +410,16 @@ pub fn swap(state: &mut Machine, n: usize) -> Control {
 		Ok(()) => (),
 		Err(e) => return Control::Exit(e.into()),
 	}
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Continue(1)
 }
 
@@ -352,6 +432,16 @@ pub fn ret(state: &mut Machine) -> Control {
 		try_or_fail!(state.memory.resize_offset(start, len));
 	}
 	state.return_range = start..(start + len);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Exit(ExitSucceed::Returned.into())
 }
 
@@ -364,5 +454,15 @@ pub fn revert(state: &mut Machine) -> Control {
 		try_or_fail!(state.memory.resize_offset(start, len));
 	}
 	state.return_range = start..(start + len);
+	#[cfg(feature = "tracing")]
+	{
+		use crate::Opcode;
+		event!(DebuggingWithoutOperand{
+			opcode: Opcode(state.code[state.position.clone().unwrap()]),
+			position: &state.position,
+			stack: state.stack(),
+			memory: state.memory(),
+		});
+	}
 	Control::Exit(ExitRevert::Reverted.into())
 }
