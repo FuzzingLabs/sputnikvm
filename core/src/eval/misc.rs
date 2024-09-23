@@ -181,7 +181,7 @@ pub fn push(state: &mut Machine, n: usize, position: usize) -> Control {
 		event!(DebuggingWithOperand{
 			opcode: Opcode(state.code[position]),
 			operands: val,
-			n: Some(n),
+			n: n,
 			position: &Ok(position),
 			stack: state.stack(),
 			memory: state.memory(),
