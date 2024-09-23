@@ -14,6 +14,7 @@ pub enum Event<'a> {
 	DebuggingWithOperand {
         opcode: Opcode,
         operands: U256,
+        n: Option<usize>,
         position: &'a Result<usize, ExitReason>,
         stack: &'a Stack,
 		memory: &'a Memory,
