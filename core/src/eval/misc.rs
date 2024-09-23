@@ -173,10 +173,6 @@ pub fn mload(state: &mut Machine) -> Control {
 
 #[inline]
 pub fn mstore(state: &mut Machine) -> Control {
-	pop_u256!(state, index);
-	let index = as_usize_or_fail!(index);
-	pop_h256!(state, value);
-	try_or_fail!(state.memory.resize_offset(index, 32));
 	#[cfg(feature = "tracing")]
 	{
 		use crate::Opcode;
@@ -187,6 +183,10 @@ pub fn mstore(state: &mut Machine) -> Control {
 			memory: state.memory(),
 		});
 	}
+	pop_u256!(state, index);
+	let index = as_usize_or_fail!(index);
+	pop_h256!(state, value);
+	try_or_fail!(state.memory.resize_offset(index, 32));
 	match state.memory.set(index, &value[..], Some(32)) {
 		Ok(()) => Control::Continue(1),
 		Err(e) => Control::Exit(e.into()),
